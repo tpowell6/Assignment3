@@ -1,0 +1,87 @@
+<html>
+<head>
+<title>
+  Image Resizer
+</title>
+<style>
+  #imagePreview{
+      height: 300px;
+      width: 300px;
+      display: block;
+  }
+
+</style>
+<body>
+ <form action="">
+  <input type="radio" name="phone" value="iOS">iOS<br>
+  <input type="radio" name="phone" value="Android">Android
+</form>
+</body>
+<select>
+<option value= "48 x 48">48x48</option>
+<option value = "72 x 72">72x72</option>
+<option value = "96 x 96">96x96</option>
+<option value = "144 x 144">144x144</option>
+<option value = "192 x 192 ">192x192</option>
+<option value = "512 x 512 ">512x512</option>
+</select>
+<script src="jquery-1.11.3.js" type="text/javascript"></script>
+
+<script>
+function imageUploaded()
+{
+   var file = $('#uploadImage').get(0);
+   if(file.files[0].type.split("/")[0].toLowerCase() != "image"){
+        alert("Incorrect file type -- Please ensure you are uploading an image file.");
+   }
+   if ( file.files && file.files[0] && file.files[0].type.split("/")[0].toLowerCase() === "image") {
+        var FR = new FileReader();
+        FR.onload = function(e) {
+            var data = e.target.result;
+            var canvas = document.createElement("canvas");
+            var img = document.createElement("img");
+            img.onload= function(){
+                 var MAX_WIDTH = 512;
+                 var MAX_HEIGHT = 512;
+                 var width = img.width;
+                 var height = img.height;
+                 var w2 = width;
+                 var h2 = height;
+                 if (width > height) {
+                     if (width > MAX_WIDTH) {
+                        h2 = height * MAX_WIDTH / width;
+                        w2 = MAX_WIDTH;
+                    }
+                 } else {
+                     if (height > MAX_HEIGHT) {
+                        w2 = width * MAX_HEIGHT / height;
+                        h2 = MAX_HEIGHT;
+                    }
+                }
+                canvas.width = w2;
+                canvas.height = h2;
+                var ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0, w2, h2);
+                var base64St = canvas.toDataURL("image/png");
+                document.getElementById("imagePreview").src = base64St;
+                document.getElementById("imagePreview").style.height = MAX_HEIGHT + "px";
+                document.getElementById("imagePreview").style.width= MAX_WIDTH + "px";
+            }
+            img.src = data;
+        };
+        FR.readAsDataURL( file.files[0] );
+
+   }
+}
+</script>
+
+</head>
+
+<body>
+  <input type="file" name="uploadImage" id="uploadImage" onchange="imageUploaded()">
+  <img id="imagePreview">
+
+</body>
+
+
+</html>
